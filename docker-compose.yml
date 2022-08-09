@@ -1,0 +1,89 @@
+version: '3'
+
+services:
+
+  mysqldb:
+    image: mysql:8.0.29
+    restart: always
+    command:
+      --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: patient_database
+      
+      MYSQL_ROOT_PASSWORD: rootroot
+      
+      MYSQL_USER: Draflo@localhost
+      MYSQL_PASSWORD: rootroot
+      
+    ports:
+      # <Port exposed> : < MySQL Port running inside container>
+      - '3307:3306'
+    expose:
+      # Opens port 3306 on the container
+      - '3306'
+      # Where our data will be persisted
+    volumes:
+      - my-db:/var/lib/mysql
+      - ./Mediscreen/database/data.sql:/docker-entrypoint-initdb.d/2.sql
+      - ./Mediscreen/database/schema.sql:/docker-entrypoint-initdb.d/1.sql
+    networks:
+      - mediscreen-app
+      
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - 27018:27017
+    restart: always
+    volumes:
+      - my-db2:/var/lib/mongo
+      - ./Mediscreen_History_And_Diabetes/db/mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - mediscreen-app
+      
+  patient:
+    image: patient
+    container_name: patient
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mysqldb
+    networks:
+      - mediscreen-app
+    restart: always
+    environment:
+      MYSQL_HOST: mysqldb
+      MYSQL_USER: Draflo@localhost
+      MYSQL_PASSWORD: rootroot
+      MYSQL_PORT: 3306
+
+  patienthistory:
+    image: patienthistory
+    container_name: patienthistory
+    ports:
+      - "8082:8082"
+    networks:
+      - mediscreen-app
+    restart: always
+    links:
+    - mongodb
+
+  patientrapport:
+    image: patientrapport
+    container_name: patientrapport
+    ports:
+      - "8080:8080"
+    networks:
+      - mediscreen-app
+    restart: always
+    depends_on:
+      - patient
+      - patienthistory
+    
+volumes:
+  my-db: {}
+  my-db2: {}
+  
+networks:
+  mediscreen-app:
+    driver: bridge
