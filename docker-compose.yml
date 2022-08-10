@@ -79,6 +79,19 @@ services:
     depends_on:
       - patient
       - patienthistory
+      
+  front:
+    container_name: mediscreen-front
+    image: front
+    restart: always
+    ports:
+        - "3000:3000"
+    depends_on:
+      - patient
+      - patienthistory
+      - patientrapport
+    networks:
+      - mediscreen-app
     
 volumes:
   my-db: {}
