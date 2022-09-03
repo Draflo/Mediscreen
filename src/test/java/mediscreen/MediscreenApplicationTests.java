@@ -10,9 +10,9 @@ class MediscreenApplicationTests {
 	void contextLoads() {
 	}
 	
-	@Test
-	   public void main() {
-	      MediscreenApplication.main(new String[] {});
-	   }
+//	@Test
+//	   public void main() {
+//	      MediscreenApplication.main(new String[] {});
+//	   }
 
 }
