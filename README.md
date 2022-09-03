@@ -4,6 +4,8 @@ Mediscreen is an application dedicated to help doctors finding warnings about th
 
 Given informations about the patient like his age and various key words, the app can generates a rapport concerning his health.  
 
+This application is splited into different microservices, the first 2 gather informations and interact with databases. Third one is the rapport generation, based on information transmited by the first 2. The last one is for the front end. 
+
 # How to launch the App
 
 First of all you'll have to install the services by running "mvn install" in the 3 back folder and "npm install" for the front folder. 
